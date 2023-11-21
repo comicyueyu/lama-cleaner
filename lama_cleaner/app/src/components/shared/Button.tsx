@@ -8,6 +8,7 @@ interface ButtonProps {
   className?: string
   icon?: ReactNode
   toolTip?: string
+  title?: string
   onKeyDown?: () => void
   onClick?: () => void
   onDown?: (ev: PointerEvent) => void
@@ -32,6 +33,7 @@ const Button: React.FC<ButtonProps> = props => {
     onMouseEnter,
     onMouseLeave,
     style,
+    title,
   } = props
 
   const blurOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -44,6 +46,7 @@ const Button: React.FC<ButtonProps> = props => {
       <div
         role="button"
         style={style}
+        title={title}
         onKeyDown={onKeyDown}
         onClick={blurOnClick}
         onMouseEnter={onMouseEnter}

@@ -106,7 +106,7 @@ function App() {
         if (event.dataTransfer.files.length > 1) {
           setToastState({
             open: true,
-            desc: 'Please drag and drop only one file',
+            desc: '拖拽或者点击上传一个文件',
             state: 'error',
             duration: 3000,
           })
@@ -118,7 +118,7 @@ function App() {
           } else {
             setToastState({
               open: true,
-              desc: 'Please drag and drop an image file',
+              desc: '拖拽或者点击上传一个图片',
               state: 'error',
               duration: 3000,
             })

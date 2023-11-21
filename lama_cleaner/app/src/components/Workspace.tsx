@@ -106,7 +106,7 @@ const Workspace = () => {
       {isPaintByExample ? <PESidePanel /> : <></>}
       {isPix2Pix ? <P2PSidePanel /> : <></>}
       <Flex style={{ position: 'absolute', top: 68, left: 24, gap: 12 }}>
-        <Plugins />
+        {/* <Plugins /> */}
         <ImageSize />
       </Flex>
       <FileManager

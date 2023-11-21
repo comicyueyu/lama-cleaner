@@ -19,7 +19,6 @@ import { ThemeChanger } from './ThemeChanger'
 import SettingIcon from '../Settings/SettingIcon'
 import PromptInput from './PromptInput'
 import CoffeeIcon from '../CoffeeIcon/CoffeeIcon'
-import Plugins from '../Plugins/Plugins'
 import emitter, {
   DREAM_BUTTON_MOUSE_ENTER,
   DREAM_BUTTON_MOUSE_LEAVE,
@@ -103,7 +102,7 @@ const Header = () => {
             <></>
           )}
 
-          {/* <label htmlFor={uploadElemId}>
+          <label htmlFor={uploadElemId}>
             <Button
               icon={<PhotoIcon />}
               style={{ border: 0, gap: 0, padding: 6 }}
@@ -124,7 +123,107 @@ const Header = () => {
                 accept="image/png, image/jpeg"
               />
             </Button>
-          </label> */}
+          </label>
+
+          <div
+            style={{
+              visibility: file ? 'visible' : 'hidden',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <label htmlFor={maskUploadElemId}>
+              <Button
+                style={{ border: 0 }}
+                disabled={isInpainting}
+                toolTip="Upload custom mask"
+              >
+                <input
+                  style={{ display: 'none' }}
+                  id={maskUploadElemId}
+                  name={maskUploadElemId}
+                  type="file"
+                  onClick={e => {
+                    const element = e.target as HTMLInputElement
+                    element.value = ''
+                  }}
+                  onChange={ev => {
+                    const newFile = ev.currentTarget.files?.[0]
+                    if (newFile) {
+                      setMask(newFile)
+                      console.info('Send custom mask')
+                      if (!runManually) {
+                        emitter.emit(EVENT_CUSTOM_MASK, { mask: newFile })
+                      }
+                    }
+                  }}
+                  accept="image/png, image/jpeg"
+                />
+                <div
+                  style={{
+                    height: 16,
+                    width: 16,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  M
+                </div>
+              </Button>
+            </label>
+
+            {mask ? (
+              <PopoverPrimitive.Root open={openMaskPopover}>
+                <PopoverPrimitive.Trigger
+                  className="btn-primary side-panel-trigger"
+                  onMouseEnter={() => setOpenMaskPopover(true)}
+                  onMouseLeave={() => setOpenMaskPopover(false)}
+                  style={{
+                    visibility: mask ? 'visible' : 'hidden',
+                    outline: 'none',
+                  }}
+                  onClick={() => {
+                    if (mask) {
+                      emitter.emit(EVENT_CUSTOM_MASK, { mask })
+                    }
+                  }}
+                >
+                  <PlayIcon />
+                </PopoverPrimitive.Trigger>
+                <PopoverPrimitive.Portal>
+                  <PopoverPrimitive.Content
+                    style={{
+                      outline: 'none',
+                    }}
+                  >
+                    {maskImageLoaded ? (
+                      <img
+                        src={maskImage.src}
+                        alt="mask"
+                        className="mask-preview"
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </PopoverPrimitive.Content>
+                </PopoverPrimitive.Portal>
+              </PopoverPrimitive.Root>
+            ) : (
+              <></>
+            )}
+
+            <Button
+              icon={<ReloadIcon style={{ height: 16, width: 16 }} />}
+              style={{ border: 0, gap: 0 }}
+              disabled={isInpainting}
+              toolTip="Rerun last mask [r]"
+              onClick={handleRerunLastMask}
+              onMouseEnter={onRerunMouseEnter}
+              onMouseLeave={onRerunMouseLeave}
+            />
+          </div>
         </div>
 
         {(isSD || isPix2Pix) && file ? <PromptInput /> : <></>}
@@ -133,7 +232,6 @@ const Header = () => {
           {/* <CoffeeIcon /> */}
           {/* <ThemeChanger /> */}
           {/* <HumanRemove /> */}
-          <Plugins />
           <div className="header-icons">
             {/* <Shortcuts /> */}
             {/* <SettingIcon /> */}

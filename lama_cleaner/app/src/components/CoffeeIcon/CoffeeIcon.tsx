@@ -14,13 +14,13 @@ const CoffeeIcon = () => {
     <div>
       <Button
         onClick={onClick}
-        toolTip="Buy me a coffee"
+        toolTip="Buy me a fola"
         style={{ border: 0 }}
         icon={<Coffee />}
       />
       <Modal
         onClose={() => setShow(false)}
-        title="Buy Me a Coffee"
+        title="Buy Me a fola"
         className="modal-setting"
         show={show}
         showCloseIcon={false}

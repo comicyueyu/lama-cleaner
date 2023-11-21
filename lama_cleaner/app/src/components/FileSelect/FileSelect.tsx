@@ -125,8 +125,8 @@ export default function FileSelect(props: FileSelectProps) {
         />
         <p className="file-select-message">
           {resolution === 'desktop'
-            ? 'Click here or drag an image file'
-            : 'Tap here to load your picture'}
+            ? '点击上传或者拖拽上传图片'
+            : '点击上传图片'}
         </p>
       </div>
     </label>

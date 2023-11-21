@@ -10,6 +10,7 @@ import {
   EyeIcon,
   ArrowsPointingOutIcon,
   ArrowDownTrayIcon,
+  PhotoIcon,
 } from '@heroicons/react/24/outline'
 import {
   ReactZoomPanPinchRef,
@@ -18,6 +19,7 @@ import {
 } from 'react-zoom-pan-pinch'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { useWindowSize, useKey, useKeyPressEvent } from 'react-use'
+
 import inpaint, { downloadToOutput, runPlugin } from '../../adapters/inpainting'
 import Button from '../shared/Button'
 import Slider from './Slider'
@@ -201,6 +203,9 @@ export default function Editor() {
   const [imageWidth, setImageWidth] = useRecoilState(imageWidthState)
   const [imageHeight, setImageHeight] = useRecoilState(imageHeightState)
   const app = useRecoilValue(appState)
+
+  // open image related
+  const [uploadElemId] = useState(`file-upload-${Math.random().toString()}`)
 
   const draw = useCallback(
     (render: HTMLImageElement, lineGroup: LineGroup) => {
@@ -639,7 +644,8 @@ export default function Editor() {
 
         setToastState({
           open: true,
-          desc: `Run ${name} successfully in ${time / 1000}s`,
+          // desc: `${name} 耗时 ${time / 1000}s`,
+          desc: `耗时 ${time / 1000}s`,
           state: 'success',
           duration: 3000,
         })
@@ -1697,7 +1703,7 @@ export default function Editor() {
 
       <div className="editor-toolkit-panel">
         <Slider
-          label="Brush"
+          label="笔刷"
           min={MIN_BRUSH_SIZE}
           max={MAX_BRUSH_SIZE}
           value={brushSize}
@@ -1705,14 +1711,40 @@ export default function Editor() {
           onClick={() => setShowRefBrush(false)}
         />
         <div className="editor-toolkit-btns">
+          <label htmlFor={uploadElemId}>
+            <Button
+              icon={<PhotoIcon />}
+              disabled={isInpainting || !file}
+              toolTip="打开新的图片"
+              style={{
+                width: 39,
+                height: 39,
+              }}
+            >
+              <input
+                style={{ display: 'none' }}
+                id={uploadElemId}
+                name={uploadElemId}
+                type="file"
+                disabled={isInpainting || !file}
+                onChange={ev => {
+                  const newFile = ev.currentTarget.files?.[0]
+                  if (newFile) {
+                    setFile(newFile)
+                  }
+                }}
+                accept="image/png, image/jpeg"
+              />
+            </Button>
+          </label>
           <Button
-            toolTip="Reset Zoom & Pan"
+            toolTip="重置视图大小"
             icon={<ArrowsPointingOutIcon />}
             disabled={scale === minScale && panned === false}
             onClick={resetZoom}
           />
           <Button
-            toolTip="Undo"
+            toolTip="撤回上一个操作"
             icon={
               <svg
                 width="19"
@@ -1731,7 +1763,7 @@ export default function Editor() {
             disabled={disableUndo()}
           />
           <Button
-            toolTip="Redo"
+            toolTip="重做"
             icon={
               <svg
                 width="19"
@@ -1751,7 +1783,7 @@ export default function Editor() {
             disabled={disableRedo()}
           />
           <Button
-            toolTip="Show Original"
+            toolTip="显示原始图片"
             icon={<EyeIcon />}
             className={showOriginal ? 'eyeicon-active' : ''}
             onDown={ev => {
@@ -1772,7 +1804,16 @@ export default function Editor() {
             disabled={renders.length === 0}
           />
           <Button
-            toolTip="Save Image"
+            title="测试隐藏按钮"
+            icon={<ArrowDownTrayIcon />}
+            disabled={!renders.length}
+            style={{
+              display: !isInpainting ? 'block' : 'none',
+            }}
+            onClick={download}
+          />
+          <Button
+            toolTip="下载图片"
             icon={<ArrowDownTrayIcon />}
             disabled={!renders.length}
             onClick={download}
